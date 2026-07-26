@@ -15,10 +15,22 @@ class AgriPointsApp extends StatelessWidget {
       title: 'AgriPoints Yield Predictor',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        colorSchemeSeed: const Color(0xFF2E7D32),
         useMaterial3: true,
-        inputDecorationTheme: const InputDecorationTheme(
-          border: OutlineInputBorder(),
+        scaffoldBackgroundColor: const Color(0xFFF4F7F3),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           isDense: true,
         ),
       ),
@@ -40,7 +52,6 @@ class _PredictionPageState extends State<PredictionPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-  // 9 controllers -> 9 text fields -> 9 variables needed for prediction
   final TextEditingController regionController = TextEditingController();
   final TextEditingController soilTypeController = TextEditingController();
   final TextEditingController cropController = TextEditingController();
@@ -92,7 +103,7 @@ class _PredictionPageState extends State<PredictionPage> {
       setState(() {
         _isError = true;
         _resultText =
-            "Fertilizer_Used and Irrigation_Used must be 'true' or 'false'.";
+            "Fertilizer Used and Irrigation Used must be 'true' or 'false'.";
       });
       return;
     }
@@ -176,6 +187,27 @@ class _PredictionPageState extends State<PredictionPage> {
     }
   }
 
+  Widget _sectionLabel(String text, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10, top: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: const Color(0xFF2E7D32)),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.3,
+              color: Color(0xFF2E7D32),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
@@ -183,7 +215,7 @@ class _PredictionPageState extends State<PredictionPage> {
     TextInputType keyboardType = TextInputType.text,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.only(bottom: 12.0),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
@@ -201,119 +233,225 @@ class _PredictionPageState extends State<PredictionPage> {
     );
   }
 
+  Widget _card({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("AgriPoints — Yield Predictor"),
-        centerTitle: true,
-      ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  "Enter farming activity details to predict crop yield "
-                  "and earn reward points.",
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+              backgroundColor: Color(0xFF2E7D32),
+              foregroundColor: Colors.white,
+              pinned: true,
+              expandedHeight: 96,
+              flexibleSpace: FlexibleSpaceBar(
+                titlePadding: EdgeInsets.only(left: 20, bottom: 14),
+                title: Text(
+                  "AgriPoints",
+                  style: TextStyle(fontWeight: FontWeight.w700),
                 ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: regionController,
-                  label: "Region",
-                  hint: "East, North, South, or West",
+                background: DecoratedBox(
+                  decoration: BoxDecoration(color: Color(0xFF2E7D32)),
                 ),
-                _buildTextField(
-                  controller: soilTypeController,
-                  label: "Soil Type",
-                  hint: "Chalky, Clay, Loam, Peaty, Sandy, or Silt",
-                ),
-                _buildTextField(
-                  controller: cropController,
-                  label: "Crop",
-                  hint: "Barley, Cotton, Maize, Rice, Soybean, or Wheat",
-                ),
-                _buildTextField(
-                  controller: weatherController,
-                  label: "Weather Condition",
-                  hint: "Cloudy, Rainy, or Sunny",
-                ),
-                _buildTextField(
-                  controller: rainfallController,
-                  label: "Rainfall (mm)",
-                  hint: "Range: 100 - 1000",
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                ),
-                _buildTextField(
-                  controller: temperatureController,
-                  label: "Temperature (Celsius)",
-                  hint: "Range: 15 - 40",
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                ),
-                _buildTextField(
-                  controller: daysToHarvestController,
-                  label: "Days to Harvest",
-                  hint: "Range: 60 - 149",
-                  keyboardType: TextInputType.number,
-                ),
-                _buildTextField(
-                  controller: fertilizerController,
-                  label: "Fertilizer Used",
-                  hint: "true or false",
-                ),
-                _buildTextField(
-                  controller: irrigationController,
-                  label: "Irrigation Used",
-                  hint: "true or false",
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _predict,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text("Predict", style: TextStyle(fontSize: 16)),
-                ),
-                const SizedBox(height: 20),
-                if (_resultText != null)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: _isError
-                          ? Colors.red.withValues(alpha: 0.1)
-                          : Colors.green.withValues(alpha: 0.1),
-                      border: Border.all(
-                        color: _isError ? Colors.red : Colors.green,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      _resultText!,
-                      style: TextStyle(
-                        color: _isError
-                            ? Colors.red.shade800
-                            : Colors.green.shade800,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-              ],
+              ),
             ),
-          ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: Text(
+                          "Enter farming activity details to predict crop "
+                          "yield and earn reward points.",
+                          style: TextStyle(fontSize: 14, color: Colors.black54),
+                        ),
+                      ),
+                      _card(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _sectionLabel(
+                                "FARM LOCATION", Icons.location_on_outlined),
+                            _buildTextField(
+                              controller: regionController,
+                              label: "Region",
+                              hint: "East, North, South, or West",
+                            ),
+                            _buildTextField(
+                              controller: soilTypeController,
+                              label: "Soil Type",
+                              hint: "Chalky, Clay, Loam, Peaty, Sandy, or Silt",
+                            ),
+                          ],
+                        ),
+                      ),
+                      _card(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _sectionLabel(
+                                "CROP & CONDITIONS", Icons.eco_outlined),
+                            _buildTextField(
+                              controller: cropController,
+                              label: "Crop",
+                              hint:
+                                  "Barley, Cotton, Maize, Rice, Soybean, or Wheat",
+                            ),
+                            _buildTextField(
+                              controller: weatherController,
+                              label: "Weather Condition",
+                              hint: "Cloudy, Rainy, or Sunny",
+                            ),
+                            _buildTextField(
+                              controller: rainfallController,
+                              label: "Rainfall (mm)",
+                              hint: "Range: 100 - 1000",
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                            ),
+                            _buildTextField(
+                              controller: temperatureController,
+                              label: "Temperature (Celsius)",
+                              hint: "Range: 15 - 40",
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                            ),
+                            _buildTextField(
+                              controller: daysToHarvestController,
+                              label: "Days to Harvest",
+                              hint: "Range: 60 - 149",
+                              keyboardType: TextInputType.number,
+                            ),
+                          ],
+                        ),
+                      ),
+                      _card(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _sectionLabel("FARMING PRACTICES",
+                                Icons.agriculture_outlined),
+                            _buildTextField(
+                              controller: fertilizerController,
+                              label: "Fertilizer Used",
+                              hint: "true or false",
+                            ),
+                            _buildTextField(
+                              controller: irrigationController,
+                              label: "Irrigation Used",
+                              hint: "true or false",
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _predict,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2E7D32),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Text(
+                                  "Predict",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      if (_resultText != null)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: _isError
+                                ? const Color(0xFFFDECEA)
+                                : const Color(0xFFE8F5E9),
+                            border: Border.all(
+                              color: _isError
+                                  ? const Color(0xFFD32F2F)
+                                  : const Color(0xFF2E7D32),
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                _isError
+                                    ? Icons.error_outline
+                                    : Icons.check_circle_outline,
+                                color: _isError
+                                    ? const Color(0xFFD32F2F)
+                                    : const Color(0xFF2E7D32),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  _resultText!,
+                                  style: TextStyle(
+                                    color: _isError
+                                        ? const Color(0xFFB71C1C)
+                                        : const Color(0xFF1B5E20),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
