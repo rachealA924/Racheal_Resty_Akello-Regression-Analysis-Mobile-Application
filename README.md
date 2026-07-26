@@ -8,7 +8,7 @@
 
 ## Live API (Swagger UI)
 
-**Public prediction API:** https://YOUR-APP-NAME.onrender.com/docs
+**Public prediction API:** https://racheal-resty-akello-regression-analysis.onrender.com/docs
 
 Test the `/predict` endpoint directly from the Swagger page above (click "Try it out"), or the `/retrain` endpoint by uploading a CSV of new labeled data.
 
