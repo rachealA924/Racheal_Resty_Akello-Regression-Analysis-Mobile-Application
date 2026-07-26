@@ -14,7 +14,7 @@ Test the `/predict` endpoint directly from the Swagger page above (click "Try it
 
 ## Video Demo
 
-**YouTube link:** [ADD YOUR VIDEO LINK HERE]
+**YouTube link:** https://youtu.be/_NmZpSEjqjc
 
 ## Repository Structure
 
